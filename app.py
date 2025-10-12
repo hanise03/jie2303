@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Genetic Algorithm"
+    page_title="Scientific Visualization"  # Changed page title
 )
 
-st.header("Genetic Algorithm", divider="gray")
+st.header("Scientific Visualization", divider="gray") # Changed header text
