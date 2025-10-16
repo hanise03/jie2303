@@ -14,6 +14,48 @@ st.set_page_config(
     layout="centered"
 )
 
+import streamlit as st
+import pandas as pd
+
+# Set up the page configuration
+st.set_page_config(
+    page_title="Data Loading Example",
+    layout="centered"
+)
+
+st.header("Arts Faculty Survey Data Loading", divider="blue")
+
+# --- Data Loading and Caching ---
+
+@st.cache_data # Cache the data load to speed up app performance
+def load_data(url):
+    """Loads the DataFrame from a URL and returns the entire DataFrame."""
+    try:
+        arts_df = pd.read_csv(url)
+        return arts_df
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return pd.DataFrame() # Return empty DataFrame on failure
+
+# URL for the CSV file
+url = 'https://raw.githubusercontent.com/hanise03/jie2303/refs/heads/main/arts_faculty_survey.csv'
+
+# Load the data
+arts_df = load_data(url)
+
+# --- Display Data ---
+
+if not arts_df.empty:
+    st.subheader("Head of the DataFrame")
+    # Streamlit displays the data frame directly.
+    # We use .head() here to show only the first few rows,
+    # similar to the original code's intent.
+    st.dataframe(arts_df.head(), use_container_width=True)
+
+    st.success(f"Data successfully loaded. DataFrame has {arts_df.shape[0]} rows and {arts_df.shape[1]} columns.")
+else:
+    st.warning("Could not load data from the specified URL.")
+
 st.header("Gender Distribution in Arts Faculty", divider="blue")
 
 # --- Example Data Setup (Replace with your actual DataFrame loading) ---
