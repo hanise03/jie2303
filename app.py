@@ -235,3 +235,109 @@ fig_box.update_yaxes(title_text=f'{expectation_cols[2]} (Q5)', row=1, col=2)
 
 # Display the figure
 st.plotly_chart(fig_box, use_container_width=True)
+
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+# --- Streamlit Page Configuration ---
+st.set_page_config(
+    page_title="Expectation Regression Analysis",
+    layout="wide"
+)
+
+st.header("Expectation Regression Analysis", divider="orange")
+
+# --- PLACEHOLDER DATA SETUP (REPLACE WITH YOUR ACTUAL DataFrame LOADING) ---
+expectation_cols = [
+    'Q3 [What was your expectation about the University as related to quality of resources?]',
+    'Q4 [What was your expectation about the University as related to quality of learning environment?]',
+    'Q5 [To what extent your expectation was met?]'
+]
+# Dummy data simulating survey scores (e.g., 1 to 5)
+data = {
+    expectation_cols[0]: [5, 4, 3, 2, 5, 4, 3, 5, 4, 3, 2, 1],
+    expectation_cols[1]: [4, 5, 3, 4, 2, 5, 4, 3, 5, 4, 2, 1],
+    expectation_cols[2]: [5, 4, 3, 2, 5, 4, 3, 4, 5, 3, 2, 1]
+}
+arts_df = pd.DataFrame(data)
+# -------------------------------------------------------------------------
+
+# Prepare the data (Equivalent to arts_df[expectation_cols].dropna())
+expectation_df = arts_df[expectation_cols].dropna()
+
+# --- Create Plotly Subplots for the Regression Plots ---
+
+# Equivalent to plt.figure() and plt.subplot(1, 2, x)
+fig = make_subplots(
+    rows=1, 
+    cols=2, 
+    subplot_titles=(
+        'Expectation on Resources vs. Expectation Met',
+        'Expectation on Learning Environment vs. Expectation Met'
+    )
+)
+
+# 1. Regression Plot for Resources (Q3 vs Q5) - Equivalent to sns.regplot
+# Plotly Express's scatter with trendline handles the regression
+fig_res = px.scatter(
+    expectation_df,
+    x=expectation_cols[0],
+    y=expectation_cols[2],
+    trendline="ols" # Ordinary Least Squares for regression line
+)
+
+# Add the scatter points and regression line to the first subplot
+fig.add_trace(fig_res.data[0], row=1, col=1) # Scatter points
+fig.add_trace(fig_res.data[1], row=1, col=1) # Trendline
+
+# 2. Regression Plot for Learning Environment (Q4 vs Q5) - Equivalent to sns.regplot
+fig_env = px.scatter(
+    expectation_df,
+    x=expectation_cols[1],
+    y=expectation_cols[2],
+    trendline="ols"
+)
+
+# Add the scatter points and regression line to the second subplot
+fig.add_trace(fig_env.data[0], row=1, col=2) # Scatter points
+fig.add_trace(fig_env.data[1], row=1, col=2) # Trendline
+
+# --- Update Layout and Labels ---
+
+# Set titles/labels for the first subplot
+fig.update_xaxes(
+    title_text='Expectation on Resources (Q3)', 
+    row=1, 
+    col=1
+)
+fig.update_yaxes(
+    title_text='Expectation Met (Q5)', 
+    row=1, 
+    col=1
+)
+
+# Set titles/labels for the second subplot
+fig.update_xaxes(
+    title_text='Expectation on Learning Environment (Q4)', 
+    row=1, 
+    col=2
+)
+fig.update_yaxes(
+    title_text='Expectation Met (Q5)', 
+    row=1, 
+    col=2
+)
+
+# Equivalent to plt.figure(figsize=(14, 6)) and plt.tight_layout()
+fig.update_layout(
+    height=600,
+    showlegend=False,
+    title_text="Regression Analysis: Expectations vs. Expectation Met"
+)
+
+# --- Display in Streamlit ---
+# Equivalent to plt.show()
+st.plotly_chart(fig, use_container_width=True)
